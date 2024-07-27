@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Linear Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="button"] {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Linear Search</h1>
+        <h2>We have &#8776;1000 Indian Boys names in our databse, try your luck if it is available here!</h2>
+        <input type="text" id="nameInput" placeholder="Enter name to search (lowercase)" />
+        <input type="button" value="Search" onclick="performSearch()" />
+        <div id="result"></div>
+    </div>
+    <script>
+        // Array of 500 Indian boys' names
+        const names = [
+            "aakash", "aarav", "abhinav", "aditya", "ajay", "akshay", "alok", "amit", "anand", "arjun",
+            "ashwin", "avi", "ayush", "babu", "balaji", "bhavesh", "bikram", "chirag", "deepak", "dinesh",
+            "divyansh", "gagan", "gaurav", "govind", "harman", "harsh", "hemant", "ishaan", "jagan", "jay",
+            "jeet", "jitin", "kailash", "kiran", "kishore", "krish", "kushal", "laxman", "manoj", "mayank",
+            "mohan", "mukesh", "naman", "nashit", "neeraj", "nikhil", "nishant", "pankaj", "pradeep", "pranav",
+            "prem", "prithvi", "raj", "rajesh", "ravi", "rishabh", "rohit", "sachin", "sagar", "samir",
+            "sandeep", "sanjay", "santosh", "saurabh", "shankar", "sharukh", "shiva", "shyam", "siddharth", "suresh",
+            "tarun", "tejas", "umesh", "upendra", "vaibhav", "vijay", "vikas", "vikram", "vinay", "viraj",
+            "vivek", "yash", "yogesh", "abhay", "aditya", "ajit", "ajit", "alok", "amrit", "anil",
+            "arvind", "ashok", "atish", "avik", "bhanu", "bhupender", "bhuvan", "chirag", "dheeraj", "dinesh",
+            "divakar", "gagan", "ganesh", "gautam", "hemant", "hitesh", "jatin", "jeevan", "kamal", "karan",
+            "kumar", "laksh", "lokesh", "manish", "naveen", "nilesh", "omkar", "pawan", "pradeep", "pramod",
+            "pranav", "rajesh", "rajesh", "ravi", "rohit", "rupesh", "sanjay", "santosh", "saurabh", "siddharth",
+            "soham", "subhash", "tushar", "ujwal", "upendra", "shivam", "varun", "vishal", "vishnu", "vivek", "yash",
+            "abhijeet", "abhinav", "abhishek", "ajay", "ajit", "akshat", "amit", "anil", "ankit", "ashwin",
+            "balram", "bhaskar", "bhupender", "chirag", "daksh", "dhanush", "gagan", "girish", "gourav", "harshit",
+            "harsh", "hitesh", "ishaan", "jatin", "jeet", "kamal", "kanishk", "kapil", "karan", "kashish",
+            "kishore", "krishna", "lakshman", "manoj", "mayank", "mohit", "mukesh", "naman", "nashit", "neeraj",
+            "nikhil", "nishant", "pankaj", "pradeep", "pratik", "praveen", "rajesh", "rajesh", "ravi", "rishabh",
+            "rohit", "sachin", "sagar", "samarth", "sandeep", "sanjay", "santosh", "shankar", "sharukh", "shiv",
+            "shyam", "siddharth", "suresh", "tarun", "tejas", "ujwal", "upendra", "varun", "vishal", "vishnu",
+            "vivek", "yash", "yogesh", "aditya", "ajay", "ajit", "anand", "arvind", "ashwin", "avik", "balaji",
+            "bhanu", "bhupender", "chirag", "deepak", "dheeraj", "dinesh", "divakar", "gagan", "ganesh", "gautam",
+            "harsh", "hitesh", "ishaan", "jatin", "jeet", "kamal", "kapil", "karan", "kashish", "kishore",
+            "krishna", "lakshman", "manish", "mayank", "mohit", "naveen", "nilesh", "omkar", "pawan", "pradeep",
+            "pramod", "praveen", "rajesh", "ravi", "rupesh", "sanjay", "santosh", "saurabh", "siddharth", "soham",
+            "subhash", "tushar", "ujwal", "upendra", "varun", "vishal", "vivek", "yash", "yogesh", "abhijeet",
+            "abhinav", "abhishek", "ajay", "ajit", "akshat", "amit", "anil", "ankit", "ashwin", "balram",
+            "bhaskar", "bhupender", "chirag", "daksh", "dhanush", "gagan", "girish", "gourav", "harshit", "harsh",
+            "hitesh", "ishaan", "jatin", "jeet", "kamal", "kanishk", "kapil", "karan", "kashish", "kishore",
+            "krishna", "lakshman", "manoj", "mayank", "mohit", "mukesh", "naman", "nashit", "neeraj", "nikhil",
+            "nishant", "pankaj", "pradeep", "pratik", "praveen", "rajesh", "ravi", "rishabh", "rohit", "sachin",
+            "sagar", "samarth", "sandeep", "sanjay", "santosh", "shankar", "sharukh", "shiv", "shyam", "siddharth",
+            "suresh", "tarun", "tejas", "ujwal", "upendra", "varun", "vishal", "vivek", "yash", "yogesh", "aditya",
+            "ajay", "ajit", "anand", "arvind", "ashwin", "avik", "balaji", "bhanu", "bhupender", "chirag", "deepak",
+            "dheeraj", "dinesh", "divakar", "gagan", "ganesh", "gautam", "harsh", "hitesh", "ishaan", "jatin",
+            "jeet", "kamal", "kapil", "karan", "kashish", "kishore", "krishna", "lakshman", "manish", "mayank",
+            "mohit", "naveen", "nilesh", "omkar", "pawan", "pradeep", "pramod", "praveen", "rajesh", "ravi",
+            "rupesh", "sanjay", "santosh", "saurabh", "siddharth", "soham", "subhash", "tushar", "ujwal", "upendra",
+            "varun", "vishal", "vivek", "yash", "yogesh", "aarush", "aaryan", "aayush", "abhinay", "abhiraam", "abhishruth", "achintya", "adarsh", "adinath", "advit", "adwik", "agam", "agamya", "agnelo", "agneya", "ahem", "aheel", "ahil", "ailesh", "aishwarya",
+            "ajesh", "ajith", "akalan", "akash", "akilesh", "akshar", "akshat", "akshendra", "akshith", "akshit",
+            "alagappan", "aman", "amardeep", "amarnath", "amish", "amlan", "amogh", "amol", "amrit", "anamay",
+            "anantya", "anchal", "andeep", "anish", "ankith", "annirudh", "anshul", "anshuman", "anunay", "arhaan",
+            "arhant", "arindam", "arjav", "arnab", "arunesh", "aryaveer", "ashank", "ashesh", "ashmit", "aswani",
+            "athan", "atulya", "avadh", "avanish", "avighn", "avin", "avinash", "aviral", "avyukt", "ayushmaan",
+            "badal", "bahubali", "bala", "balachandran", "banarasi", "bandhan", "baneet", "bankim", "barkha", "basava",
+            "behar", "bhagwan", "bhairav", "bhanupratap", "bharath", "bhavesh", "bhuvanesh", "bimal", "birendra", "bishal",
+            "bishnu", "buddhadev", "chait", "chamanlal", "champak", "chandan", "chandrahas", "charandas", "chetan", "chintan",
+            "chiranjeet", "darshan", "dattatreya", "deepak", "deeptanshu", "deshan", "devaditya", "devak", "deval", "devank",
+            "devavrat", "devdutta", "devesh", "devnarayan", "dhairyashil", "dhanush", "dharmesh", "dharma", "dhaval", "dhishan",
+            "dhruvansh", "dhyan", "dhyey", "dilshad", "divit", "divyansh", "dnyanesh", "dwaipayan", "ebrahim", "efan",
+            "ekesh", "eksat", "eshank", "eshwar", "evansh", "faiz", "faizan", "farhan", "farid", "fateh",
+            "gaganpreet", "gajanan", "gajendra", "gambheer", "ganapati", "ganeshan", "gangesh", "ganshyam", "gautam", "gautamkumar",
+            "gavesh", "giriraj", "gokulan", "govinda", "govindarajan", "gupta", "gurudutt", "gurudas", "gurudutt", "gururaj",
+            "gyandev", "haider", "haneef", "hanish", "harbhajan", "harendar", "harimohan", "harinarayan", "hariprasad", "hariram",
+            "harinder", "harishchandra", "harishankar", "harit", "harsith", "harsukh", "hartaj", "harveer", "hasan", "hasmukh",
+            "hassaan", "hemang", "hemant", "hemendra", "hemil", "hemanth", "heramb", "himmat", "hiren", "hridayesh",
+            "hridya", "hridayesh", "hrishikesh", "iha", "ihit", "ikshan", "ilakiyan", "imran", "inbanathan", "indrajeet",
+            "indranil", "indresh", "inesh", "iniyan", "iqbal", "irfan", "ishaan", "ishith", "isvak", "ivaan",
+            "ivor", "iyal", "jaichand", "jaideep", "jaikrishna", "jaikumar", "jaimohan", "jaiwant", "janakiram", "janamejaya",
+            "janan", "janardhan", "janendra", "jasjit", "jaswanth", "jaivik", "jeevan", "jeevith", "jeevithan", "jitendra",
+            "jithan", "jivesh", "joginder", "jyotiprakash", "kabeer", "kailash", "kaivalya", "kalai", "kalyan", "kamalkant",
+            "kamlesh", "kanad", "kanishk", "kanishkan", "karanbir", "karanth", "karanveer", "karthikeya", "kartikeya", "kaushalendra",
+            "kaushik", "kavish", "kayur", "keertan", "kevin", "khaan", "khalil", "khanderao", "khushal", "kiaan",
+            "kimaya", "kishen", "kishorkumar", "kishore", "kishna", "kishorkumar", "kishorekumar", "kishorkumar", "kondal", "kripesh",
+            "krishav", "krishiv", "krishnadas", "krishnakant", "krishnakumar", "kuldeep", "kundan", "kunwar", "kushagra", "lalit",
+            "lalitesh", "lakshmanan", "lakshmikanth", "lal", "lahari", "lakhwinder", "lalji", "lakhan", "lalchand", "lav",
+            "lavesh", "lokendra", "lovish", "madhu", "madan", "mahadavan", "mahasvin", "mahender", "mahesh", "maheshwar",
+            "maheshwara", "mahi", "mahit", "mainak", "maitri", "malhar", "manav", "manek", "manishankar", "manik",
+            "maniraj", "manishankar", "manjunath", "manmath", "manmohan", "mannan", "manohar", "mantesh", "manya", "margesh",
+            "mariappan", "marut", "maruti", "mayan", "mayur", "mehul", "mithilesh", "mithun", "mihir", "mir",
+            "misal", "mitrajit", "mohanlal", "mokshit", "mokshith", "mridul", "mrigank", "mukund", "murli", "murugan",
+            "nabin", "nagesh", "nahush", "naimish", "nakul", "nalin", "naman", "namit", "namish", "namrata",
+            "narayan", "narayana", "naveen", "navin", "neelkanth", "neerav", "neerav", "nidhish", "nidhip", "niket",
+            "nikhilendra", "nikhilesh", "nilay", "nimay", "nimit", "nimish", "niraj", "nirmal", "nirmay", "nirmesh",
+            "nirmit", "nirvan", "nitin", "nithin", "nithish", "nivas", "niyam", "niyath", "nourin", "nupur",
+            "oishik", "omkaran", "omesh", "omprakash", "padmesh", "panchal", "pankil", "parijat", "parikshit", "parimal",
+            "paritosh", "paritosh", "parmesh", "parmod", "partha", "parthasarathi", "parthiv", "parveen", "pavan", "pavankumar",
+            "piyush", "prabhas", "prabhav", "prabhjeet", "prabodh", "prachet", "pradeepkumar", "prajesh", "prakash", "pramath",
+            "pramesh", "pranjal", "pranit", "pranjit", "prathamesh", "pratik", "pratul", "prawal", "prayag", "prerit",
+            "priyabrata", "prosenjit", "pukhraj", "puneet", "punya", "purab", "puranjay", "purushottam", "puneet", "pushkar",
+            "pushpesh", "rahuldev", "raja", "rajasekar", "rakesh", "ramakant", "ramakanta", "ramakrishna", "raman", "ramana",
+            "ramesh", "rameshwar", "ramgopal", "ramkishan", "ramkishore", "ramkrishna", "ramlal", "ramnath", "ramprasad", "ramratan",
+            "ramveer", "ranganath", "rangarajan", "ranganathan", "rangasamy", "ranganath", "rangaswamy", "rangaswamy", "ravi", "ravichandra",
+            "ravichandran", "ravikiran", "ravindra", "raviya", "rehmat", "reshav", "reshu", "revanth", "rishab", "rishabh",
+            "rishan", "rishav", "rishikesh", "ritesh", "ritvik", "robin", "ronak", "rupal", "rushi", "rushikesh",
+            "rushin", "rutvik", "sabal", "sachchidanand", "sachin", "sadanand", "sadhil", "sahaj", "sahil", "sairam",
+            "saketh", "salil", "samarth", "samesh", "samiran", "samyak", "sanat", "sanchit", "sandip", "sankalp",
+            "sanjay", "sanjeev", "sanketh", "sanman", "sanskar", "santosh", "sanyam", "sapan", "saptarshi", "saransh",
+            "saravanan", "sarthak", "sarvesh", "sashwat", "satvik", "satyesh", "satyam", "satyendra", "saumil", "saurabh",
+            "savan", "savya", "shailendra", "shailesh", "shakthi", "shamal", "shambhu", "shantanu", "sharad", "sharath",
+            "sharat", "sharavan", "sharang", "shashi", "shashidhar", "shashikant", "shashishekhar", "shatrujit", "shaurya", "shekhar",
+            "sheshan", "shivakumar", "shivansh", "shivaraj", "shivendra", "shivesh", "shrikant", "shrish", "shriram", "shrishail",
+            "shrikesh", "shripad", "shravan", "shreeharsha", "shreenath", "shrey", "shrikar", "shrivatsa", "shrivatsav", "shrujan",
+            "shubham", "shubhanshu", "shubhashish", "shuddha", "shukra", "shushant", "shyam", "sidhant", "sidhanth", "siddharth",
+            "siddhesh", "sidheshwar", "sifal", "sihor", "siket", "simant", "simranjeet", "sindhoor", "sipra", "sirdhar",
+            "sita", "sitakanta", "sitanshu", "sivaji", "sivaprakash", "sivaram", "siya", "soban", "sohan", "sohanlal",
+            "sohil", "som", "somendra", "somesh", "somnath", "sonu", "sooraj", "sourabh", "sourav", "sparsh",
+            "spandan", "sreejith", "sreejit", "sreekar", "sreenath", "sreenivasa", "sreenivasulu", "sresth", "srikanth", "srinath",
+            "srinivas", "srinivasa", "srinivasan", "sripal", "srishanth", "srivatsav", "stavan", "subbu", "subodh", "subramanian",
+            "subramani", "subrahmanya", "subroto", "subrahmanyam", "suchit", "sudhanshu", "sudharshan", "sudhir", "sudhakara", "sugam",
+            "sujeet", "sujit", "sukanta", "sukesh", "sukhadev", "sukhvinder", "sumanth", "sumedh", "sumit", "sunil",
+            "suraj", "suryakant", "suryadev", "suryaprakash", "sushanth", "sushil", "susheel", "susil", "susmita", "swami",
+            "swarnendu", "swarup", "swetank", "syed", "tabrez", "tadit", "taimur", "tanish", "tanmay", "tanraj",
+            "tarak", "taraksh", "taranga", "tathagat", "tejas", "tejash", "tejendra", "tejesh", "thejas", "thushar",
+            "tuhil", "tuhin", "tulsiram", "ulhas", "umakant", "umananda", "umesh", "upendra", "upanand", "urmil",
+            "utkarsh", "utsav", "uttam", "utpal", "vaibhav", "vaikunt", "vaidyanath", "vaikundanath", "vairaj", "vaithy",
+            "valmiki", "vanraj", "vansh", "varad", "varghese", "varin", "varnit", "vashisht", "vasudev", "vasant",
+            "vasanth", "vatsal", "vatsalya", "veerabhadra", "veer", "veerendra", "veeresh", "veervikram", "venkatraman", "venkat",
+            "venkatraman", "venkatraman", "venkatesan", "venkatesh", "vesh", "vibhas", "vibhat", "vibhav", "vidhath", "vidhan",
+            "vidhyadhar", "vidur", "vidurath", "vidutt", "vighnesh", "vihari", "vignesh", "vijay", "vijayakumar", "vijendra",
+            "vijval", "vimal", "vinay", "vinayak", "vindhya", "vinit", "vinod", "vinyas", "virendra", "viraj",
+            "viral", "virat", "vishal", "vishesh", "vishnu", "vishnudas", "vishvamitra", "vismay", "visvajit", "visvak",
+            "vishvanath", "vishwajit", "vishwanath", "vivek", "vrajesh", "vyom", "yadhav", "yagnesh", "yash", "yashas",
+            "yashwanth", "yogesh", "yograj", "yogendra", "zaid", "zakir", "zayan", "zeeshan", "zuber", "zulfiqar"
+        ];
+
+        function performSearch() {
+            const input = document.getElementById('nameInput').value.toLowerCase();
+            const resultDiv = document.getElementById('result');
+
+            if (!input) {
+                resultDiv.textContent = 'Please enter a name.';
+                return;
+            }
+
+            const index = linearSearch(names, input);
+            if (index !== -1) {
+                resultDiv.textContent = 'Name found at index: ' + index;
+            } else {
+                resultDiv.textContent = 'Name not available in our database, sorry.';
+            }
+        }
+
+        function linearSearch(arr, target) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] === target) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    </script>
+</body>
+
+</html>
